@@ -23,3 +23,15 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
 }
+
+task buildWeb(type: Exec) {
+	workingDir 'web'
+	commandLine 'npm', 'run', 'build'
+}
+
+task copyWebFront(type: Copy, dependsOn: ['buildWeb']) {
+	from 'web/dist'
+	into 'src/main/resources/static'
+}
+
+build.dependsOn('copyWebFront')

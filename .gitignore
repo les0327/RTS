@@ -13,5 +13,7 @@
 ### JS
 .DS_Store
 node_modules/
-/dist/
+web/dist/
 npm-debug.log*
+
+src/main/resources/static
