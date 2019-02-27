@@ -10,3 +10,8 @@
 *.ipr
 /out/
 
+### JS
+.DS_Store
+node_modules/
+/dist/
+npm-debug.log*
