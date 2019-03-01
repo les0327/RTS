@@ -5,68 +5,54 @@
       <p>M: {{ev}}</p>
       <p>D: {{variance}}</p>
     </div>
-    <canvas id="xChart"></canvas>
+    <canvas id="xChartLab1"></canvas>
+    <canvas id="timeChartLab1"></canvas>
   </div>
 </template>
 
 <script>
-  import Chart from 'chart.js';
   import axios from 'axios';
+  import Chart from "chart.js";
+  import ChartDataProvider from "./ChartDataProvider";
 
   export default {
     name: "Lab1",
+    components: {Chart},
     created() {
-      axios.get('http://localhost:8080/api/v1/lab1/x/chart?from=0&to=2')
+      axios.get('http://localhost:8080/api/v1/lab1/x/chart?from=0&to=1')
         .then(response => {
-          this.setChartData(response.data);
-          this.refreshChart();
-        })
-        .catch(error => {
-          console.log(error);
-        })
+          this.setXChartData(response.data);
+          this.renderChart()
+        });
+      axios.get('http://localhost:8080/api/v1/lab1/time/chart?count=20&step=50000')
+        .then(response => {
+          this.setTimeChartData(response.data);
+          this.renderChart()
+        });
     },
     data() {
       return {
         ev: undefined,
         variance: undefined,
-        chart: undefined
+        xChartData: undefined,
+        timeChartData: undefined
       }
     },
     methods: {
-      setChartData(data) {
+      setXChartData(data) {
         this.ev = data.ev;
         this.variance = data.variance;
-        this.chart = data.chart;
+        this.xChartData = data.chart;
       },
-      refreshChart() {
-        new Chart('xChart', {
-          type: 'line',
-          data: {
-            datasets: [{
-              label: 'X(t)',
-              data: this.chart,
-              borderColor: "#6a7fdd",
-              fill: false
-            }]
-          },
-          options: {
-            animation: {
-              duration: 500, // general animation time
-            },
-            scales: {
-              yAxes: [{
-                id: 'X',
-                type: 'linear',
-                position: 'left'
-              }],
-              xAxes: [{
-                id: 't',
-                type: 'linear',
-                position: 'bottom'
-              }]
-            }
-          }
-        });
+      setTimeChartData(data) {
+        this.timeChartData = data;
+      },
+      renderChart() {
+        const xCtx = document.getElementById('xChartLab1');
+        const timeCtx = document.getElementById('timeChartLab1');
+
+        const xChart = new Chart(xCtx, ChartDataProvider.chartData('X(t)', '#6a7fdd', this.xChartData));
+        const timeChart = new Chart(timeCtx, ChartDataProvider.chartData('T(N)', '#50dd95', this.timeChartData));
       }
     }
   }
