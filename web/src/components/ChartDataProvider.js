@@ -12,7 +12,7 @@ export default {
       },
       options: {
         animation: {
-          duration: 200, // general animation time
+          duration: 0,
         },
         scales: {
           yAxes: [{
