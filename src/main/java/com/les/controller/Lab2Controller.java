@@ -3,6 +3,7 @@ package com.les.controller;
 import com.les.model.Signal;
 import com.les.model.dto.Point;
 import com.les.util.MathUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,7 @@ import static com.les.util.MathUtils.*;
 @RequestMapping("/api/v1/lab2")
 public class Lab2Controller implements LabController {
 
+    @GetMapping("chart")
     public Map<String, Object> compute(@RequestParam(defaultValue = "0") double from,
                                        @RequestParam(defaultValue = "1") double to) {
 
@@ -65,7 +67,7 @@ public class Lab2Controller implements LabController {
 
     private List<Point> mapToChart(List<Double> tValues, List<Double> values) {
         List<Point> chart = new ArrayList<>();
-        for (int i = 0 ; i < tValues.size(); i++)
+        for (int i = 0 ; i < tValues.size() && i < values.size(); i++)
             chart.add(new Point(tValues.get(i), values.get(i)));
 
         return chart;
