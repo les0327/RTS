@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-import static java.util.stream.IntStream.*;
 
 @RestController
 @RequestMapping("/api/v1/lab1")
@@ -37,9 +36,9 @@ public class Lab1Controller {
         HashMap<String, Object> response = new HashMap<>();
         Signal s = new Signal(n, Wmax, Amax);
 
-        List<Point> list = range(0, N + 1)
-                .mapToDouble(k -> from + k * (to - from) / N)
-                .mapToObj(t -> new Point(t, s.value(t, harmonicFunction)))
+        List<Point> list = MathUtils.range(from, to, (to - from) / N)
+                .stream()
+                .map(t -> new Point(t, s.value(t, harmonicFunction)))
                 .collect(Collectors.toList());
 
         response.put("chart", list);
@@ -56,25 +55,37 @@ public class Lab1Controller {
 
         List<Point> response = new ArrayList<>();
         for (int i = 1; i <= count; i++) {
+
             final double div = i * step;
 
             long time = 0;
-            for (int f = 0; f < 5; f++) {
+
+            for (int f = 0; f < 3; f++) {
                 time += TimeUtil.time(
-                        () -> range(0, N + 1)
-                                .mapToDouble(k -> k / div)
-                                .forEach(t -> s.value(t, harmonicFunction))
+                        () -> MathUtils.range(0, 1, 1 / div).forEach(t -> s.value(t, harmonicFunction))
                 );
             }
 
-            time /= 5;
+            time /= 3;
 
-            response.add(
-                    new Point(
-                            div,
-                            time
-                    )
-            );
+            response.add(new Point(div, time));
+        }
+
+        return response;
+    }
+
+    @GetMapping("/n/chart")
+    public List<Point> nChart(@RequestParam(defaultValue = "20") int count,
+                              @RequestParam(defaultValue = "10") int step) {
+        List<Point> response = new ArrayList<>();
+        for (int i = 1; i <= count; i++) {
+            response
+                    .add(
+                            new Point(
+                                    (double) (i * step),
+                                    MathUtils.range(0, 1, 1 / ((double) (i * step))).size()
+                            )
+                    );
         }
 
         return response;

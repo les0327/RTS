@@ -46,7 +46,7 @@
         from: '0',
         to: '1',
         count: '10',
-        step: '50000',
+        step: '500',
         ev: undefined,
         variance: undefined,
         xChartData: undefined,
@@ -55,14 +55,14 @@
     },
     methods: {
       getXChart() {
-        axios.get(`http://localhost:8080/api/v1/lab1/x/chart?from=${this.from}&to=${this.to}`)
+        axios.get(`/api/v1/lab1/x/chart?from=${this.from}&to=${this.to}`)
           .then(response => {
             this.setXChartData(response.data);
             this.renderChart()
           });
       },
       getTimeChart() {
-        axios.get(`http://localhost:8080/api/v1/lab1/time/chart?count=${this.count}&step=${this.step}`)
+        axios.get(`/api/v1/lab1/time/chart?count=${this.count}&step=${this.step}`)
           .then(response => {
             this.setTimeChartData(response.data);
             this.renderChart()
