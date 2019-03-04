@@ -1,6 +1,5 @@
 package com.les.controller;
 
-import com.les.model.Harmonic;
 import com.les.model.Signal;
 import com.les.model.dto.Point;
 import com.les.util.MathUtils;
@@ -10,25 +9,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiFunction;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
 @RestController
 @RequestMapping("/api/v1/lab1")
-public class Lab1Controller {
-
-    public static final int n = 8;
-
-    public static final int Wmax = 1200;
-
-    public static final int N = 1024;
-
-    public static final int Amax = 1;
-
-    private final BiFunction<Harmonic, Double, Double> harmonicFunction = (h, t) -> h.A() * Math.sin(h.W() * t + h.phi());
+public class Lab1Controller implements LabController {
 
     @GetMapping("/x/chart")
     public Map<String, Object> xChart(@RequestParam(defaultValue = "0") double from,

@@ -2,6 +2,7 @@ package com.les.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class MathUtils {
 
@@ -25,6 +26,19 @@ public final class MathUtils {
         }
 
         return list;
+    }
+
+    public static double correlation(List<Double> aValues, List<Double> bValues, int tauIndex) {
+        double aEv = ev(aValues);
+        double bEv = ev(bValues);
+        aValues = aValues.stream().map(x -> x - aEv).collect(Collectors.toList());
+        bValues = bValues.stream().map(y -> y - bEv).collect(Collectors.toList());
+        double res = 0;
+        int i;
+        for (i = 0; i < aValues.size() && (i + tauIndex) < bValues.size(); i++) {
+            res += aValues.get(i) * bValues.get(i + tauIndex);
+        }
+        return res / (i - 1);
     }
 
 }
