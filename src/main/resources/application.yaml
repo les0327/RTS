@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: rts
+server:
+  port: ${PORT:8080}
