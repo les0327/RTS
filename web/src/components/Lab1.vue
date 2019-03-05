@@ -23,6 +23,9 @@
       </label>
       <canvas id="timeChartLab1"></canvas>
     </div>
+    <div>
+      <canvas id="DChartLab1"></canvas>
+    </div>
   </div>
 </template>
 
@@ -50,6 +53,7 @@
         ev: undefined,
         variance: undefined,
         xChartData: undefined,
+        dChartData: undefined,
         timeChartData: undefined
       }
     },
@@ -68,6 +72,13 @@
             this.renderChart()
           });
       },
+      getDChart() {
+        axios.get(`/api/v1/lab1/D/chart?from=0&to=1024`)
+          .then(response => {
+            this.setDChartData(response.data);
+            this.renderChart()
+          });
+      },
       setXChartData(data) {
         this.ev = data.ev;
         this.variance = data.variance;
@@ -76,12 +87,17 @@
       setTimeChartData(data) {
         this.timeChartData = data;
       },
+      setDChartData(data) {
+        this.dChartData = data;
+      },
       renderChart() {
         const xCtx = document.getElementById('xChartLab1');
         const timeCtx = document.getElementById('timeChartLab1');
+        const DCtx = document.getElementById('DChartLab1');
 
         const xChart = new Chart(xCtx, ChartDataProvider.chartData('X(t)', '#6a7fdd', this.xChartData));
         const timeChart = new Chart(timeCtx, ChartDataProvider.chartData('T(N)', '#50dd95', this.timeChartData));
+        const dChart = new Chart(DCtx, ChartDataProvider.chartData('D(N)', '#dd5888', this.dChartData));
       }
     }
   }

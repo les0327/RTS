@@ -80,4 +80,28 @@ public class Lab1Controller implements LabController {
 
         return response;
     }
+
+    @GetMapping("/D/chart")
+    public List<Point> DChart(@RequestParam(defaultValue = "0") int from,
+                              @RequestParam(defaultValue = "1024") int to) {
+        List<Point> response = new ArrayList<>();
+
+        Signal s = new Signal(n, Wmax, Amax);
+
+        for (int i = from; i <= to; i++) {
+            response.add(
+                    new Point(
+                            i,
+                            MathUtils.variance(
+                                    MathUtils.range(0, 1, 1. / i)
+                                            .stream()
+                                            .map(t -> s.value(t, harmonicFunction))
+                                            .collect(Collectors.toList())
+                            )
+                    )
+            );
+        }
+
+        return response;
+    }
 }

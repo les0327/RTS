@@ -28,6 +28,10 @@ public final class MathUtils {
         return list;
     }
 
+    public static double correlation(List<Double> aValues, int tauIndex) {
+        return correlation(aValues, aValues, tauIndex);
+    }
+
     public static double correlation(List<Double> aValues, List<Double> bValues, int tauIndex) {
         double aEv = ev(aValues);
         double bEv = ev(bValues);
