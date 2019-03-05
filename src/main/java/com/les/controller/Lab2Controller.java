@@ -20,7 +20,7 @@ import static com.les.util.MathUtils.*;
 @RequestMapping("/api/v1/lab2")
 public class Lab2Controller implements LabController {
 
-    @GetMapping("chart")
+    @GetMapping("/chart")
     public Map<String, Object> compute(@RequestParam(defaultValue = "0") double from,
                                        @RequestParam(defaultValue = "1") double to) {
 
@@ -40,7 +40,7 @@ public class Lab2Controller implements LabController {
         List<Double> xValues = xChart.stream().map(Point::getY).collect(Collectors.toList());
         List<Double> yValues = yChart.stream().map(Point::getY).collect(Collectors.toList());
 
-        for (int tau = 0; tau    < N / 2; tau++) {
+        for (int tau = 1; tau    < N / 2; tau++) {
             getCorrelation(corrXValues, xValues, xValues, tau);
             getCorrelation(corrYValues, yValues, yValues, tau);
             getCorrelation(corrXYValues, xValues, yValues, tau);
@@ -62,7 +62,7 @@ public class Lab2Controller implements LabController {
     }
 
     private void getCorrelation(List<Double> corrXYValues, List<Double> aValues, List<Double> bValues, int tau) {
-        corrXYValues.add(correlation(aValues.subList(0, aValues.size() / 2), bValues, tau));
+        corrXYValues.add(correlation(aValues, bValues, tau));
     }
 
     private List<Point> mapToChart(List<Double> tValues, List<Double> values) {
