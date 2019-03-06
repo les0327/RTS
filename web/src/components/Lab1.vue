@@ -24,6 +24,12 @@
       <canvas id="timeChartLab1"></canvas>
     </div>
     <div>
+      <label>
+        from: <input v-model.number="dFrom" type="number" @change="getDChart">
+      </label>
+      <label>
+        to: <input v-model.number="dTo" type="number" @change="getDChart">
+      </label>
       <canvas id="DChartLab1"></canvas>
     </div>
   </div>
@@ -43,6 +49,7 @@
     created() {
       this.getXChart();
       this.getTimeChart();
+      this.getDChart();
     },
     data() {
       return {
@@ -50,54 +57,39 @@
         to: '1',
         count: '10',
         step: '500',
+        dFrom: '0',
+        dTo: '1024',
         ev: undefined,
         variance: undefined,
-        xChartData: undefined,
-        dChartData: undefined,
-        timeChartData: undefined
+        xChart: undefined,
+        timeChart: undefined,
+        dChart: undefined
       }
     },
     methods: {
       getXChart() {
         axios.get(`/api/v1/lab1/x/chart?from=${this.from}&to=${this.to}`)
           .then(response => {
-            this.setXChartData(response.data);
-            this.renderChart()
+            this.ev = response.data.ev;
+            this.variance = response.data.variance;
+            this.renderChart('xChartLab1', 'X(t)', response.data.chart)
           });
       },
       getTimeChart() {
         axios.get(`/api/v1/lab1/time/chart?count=${this.count}&step=${this.step}`)
           .then(response => {
-            this.setTimeChartData(response.data);
-            this.renderChart()
+            this.renderChart('timeChartLab1', 'T(N)', response.data)
           });
       },
       getDChart() {
-        axios.get(`/api/v1/lab1/D/chart?from=0&to=1024`)
+        axios.get(`/api/v1/lab1/D/chart?from=${this.dFrom}&to=${this.dTo}`)
           .then(response => {
-            this.setDChartData(response.data);
-            this.renderChart()
+            this.renderChart('DChartLab1', 'D(N)', response.data)
           });
       },
-      setXChartData(data) {
-        this.ev = data.ev;
-        this.variance = data.variance;
-        this.xChartData = data.chart;
-      },
-      setTimeChartData(data) {
-        this.timeChartData = data;
-      },
-      setDChartData(data) {
-        this.dChartData = data;
-      },
-      renderChart() {
-        const xCtx = document.getElementById('xChartLab1');
-        const timeCtx = document.getElementById('timeChartLab1');
-        const DCtx = document.getElementById('DChartLab1');
-
-        const xChart = new Chart(xCtx, ChartDataProvider.chartData('X(t)', '#6a7fdd', this.xChartData));
-        const timeChart = new Chart(timeCtx, ChartDataProvider.chartData('T(N)', '#50dd95', this.timeChartData));
-        const dChart = new Chart(DCtx, ChartDataProvider.chartData('D(N)', '#dd5888', this.dChartData));
+      renderChart(chart, id, title, data) { // todo: try to update chart instead recreating
+        new Chart(document.getElementById(id),
+          ChartDataProvider.chartData(title, '#'+Math.floor(Math.random()*16777215).toString(16), data));
       }
     }
   }

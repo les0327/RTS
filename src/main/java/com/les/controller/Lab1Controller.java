@@ -39,14 +39,15 @@ public class Lab1Controller implements LabController {
     }
 
     @GetMapping("/time/chart")
-    public List<Point> timeChart(@RequestParam(defaultValue = "20") int count,
-                                 @RequestParam(defaultValue = "10") int step) {
+    public Point[] timeChart(@RequestParam(defaultValue = "20") int count,
+                             @RequestParam(defaultValue = "10") int step) {
         Signal s = new Signal(n, Wmax, Amax);
 
-        List<Point> response = new ArrayList<>();
-        for (int i = 1; i <= count; i++) {
+        Point[] response = new Point[count];
 
-            final double div = i * step;
+        for (int i = 0; i < count; i++) {
+
+            final double div = (i + 1) * step;
 
             long time = 0;
 
@@ -58,48 +59,28 @@ public class Lab1Controller implements LabController {
 
             time /= 3;
 
-            response.add(new Point(div, time));
-        }
-
-        return response;
-    }
-
-    @GetMapping("/n/chart")
-    public List<Point> nChart(@RequestParam(defaultValue = "20") int count,
-                              @RequestParam(defaultValue = "10") int step) {
-        List<Point> response = new ArrayList<>();
-        for (int i = 1; i <= count; i++) {
-            response
-                    .add(
-                            new Point(
-                                    (double) (i * step),
-                                    MathUtils.range(0, 1, 1 / ((double) (i * step))).size()
-                            )
-                    );
+            response[i] = new Point(div, time);
         }
 
         return response;
     }
 
     @GetMapping("/D/chart")
-    public List<Point> DChart(@RequestParam(defaultValue = "0") int from,
-                              @RequestParam(defaultValue = "1024") int to) {
-        List<Point> response = new ArrayList<>();
+    public Point[] DChart(@RequestParam(defaultValue = "0") int from,
+                          @RequestParam(defaultValue = "1024") int to) {
 
         Signal s = new Signal(n, Wmax, Amax);
 
-        for (int i = from; i <= to; i++) {
-            response.add(
-                    new Point(
-                            i,
-                            MathUtils.variance(
-                                    MathUtils.range(0, 1, 1. / i)
-                                            .stream()
-                                            .map(t -> s.value(t, harmonicFunction))
-                                            .collect(Collectors.toList())
-                            )
-                    )
-            );
+        Point[] response = new Point[to - from];
+
+        for (int i = from; i < to; i++) {
+
+            List<Double> values = MathUtils.range(0, 1, 1. / i)
+                    .stream()
+                    .map(t -> s.value(t, harmonicFunction))
+                    .collect(Collectors.toList());
+
+            response[i - from] = new Point(i, MathUtils.variance(values));
         }
 
         return response;
