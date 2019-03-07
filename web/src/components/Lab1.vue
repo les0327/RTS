@@ -40,8 +40,7 @@
 
 <script>
   import axios from 'axios';
-  import Chart from "chart.js";
-  import ChartDataProvider from "./ChartDataProvider";
+  import ChartUtil from "./ChartUtil";
 
   export default {
     name: "Lab1",
@@ -57,8 +56,8 @@
         to: '1',
         count: '10',
         step: '500',
-        dFrom: '0',
-        dTo: '1024',
+        dFrom: '2',
+        dTo: '500',
         ev: undefined,
         variance: undefined,
         xChart: undefined,
@@ -68,28 +67,33 @@
     },
     methods: {
       getXChart() {
-        axios.get(`/api/v1/lab1/x/chart?from=${this.from}&to=${this.to}`)
+        axios.get(`http://localhost:8080/api/v1/lab1/x/chart?from=${this.from}&to=${this.to}`)
           .then(response => {
             this.ev = response.data.ev;
             this.variance = response.data.variance;
-            this.renderChart('xChartLab1', 'X(t)', response.data.chart)
+            if (!this.xChart) {
+              this.xChart = ChartUtil.chart('xChartLab1', [ChartUtil.dataset('X(t)', '#FF06FF', [])]);
+            }
+            ChartUtil.refreshChart(this.xChart, response.data.chart)
           });
       },
       getTimeChart() {
-        axios.get(`/api/v1/lab1/time/chart?count=${this.count}&step=${this.step}`)
+        axios.get(`http://localhost:8080/api/v1/lab1/time/chart?count=${this.count}&step=${this.step}`)
           .then(response => {
-            this.renderChart('timeChartLab1', 'T(N)', response.data)
+            if (!this.timeChart) {
+              this.timeChart = ChartUtil.chart('timeChartLab1', [ChartUtil.dataset('T(N)', '#ccff63', [])]);
+            }
+            ChartUtil.refreshChart(this.timeChart, response.data)
           });
       },
       getDChart() {
-        axios.get(`/api/v1/lab1/D/chart?from=${this.dFrom}&to=${this.dTo}`)
+        axios.get(`http://localhost:8080/api/v1/lab1/D/chart?from=${this.dFrom}&to=${this.dTo}`)
           .then(response => {
-            this.renderChart('DChartLab1', 'D(N)', response.data)
+            if (!this.dChart) {
+              this.dChart = ChartUtil.chart('DChartLab1', [ChartUtil.dataset('D(N)', '#FF06FF',[])]);
+            }
+            ChartUtil.refreshChart(this.dChart, response.data)
           });
-      },
-      renderChart(chart, id, title, data) { // todo: try to update chart instead recreating
-        new Chart(document.getElementById(id),
-          ChartDataProvider.chartData(title, '#'+Math.floor(Math.random()*16777215).toString(16), data));
       }
     }
   }

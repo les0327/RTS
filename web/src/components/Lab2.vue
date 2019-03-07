@@ -1,42 +1,42 @@
 <template>
   <div id="lab2">
     <h1>Lab2</h1>
+    <div>
+      <label>
+        from: <input v-model.number="from" type="number" @change="getChartData">
+      </label>
+      <label>
+        to: <input v-model.number="to" type="number" @change="getChartData">
+      </label>
       <div>
-        <label>
-          from: <input v-model.number="from" type="number" @change="getChartData">
-        </label>
-        <label>
-          to: <input v-model.number="to" type="number" @change="getChartData">
-        </label>
-        <div>
-          <p>Mx: {{xEv}}</p>
-          <p>Dx: {{xVariance}}</p>
-          <canvas id="xChartLab2"></canvas>
-        </div>
-        <div>
-          <p>My: {{yEv}}</p>
-          <p>Dy: {{yVariance}}</p>
-          <canvas id="yChartLab2"></canvas>
-        </div>
+        <p>Mx: {{xEv}}</p>
+        <p>Dx: {{xVariance}}</p>
+        <canvas id="xChartLab2"></canvas>
       </div>
       <div>
-        <div>
-          <canvas id="rxxChart"></canvas>
-        </div>
-        <div>
-          <canvas id="ryyChart"></canvas>
-        </div>
-        <div>
-          <canvas id="rxyChart"></canvas>
-        </div>
+        <p>My: {{yEv}}</p>
+        <p>Dy: {{yVariance}}</p>
+        <canvas id="yChartLab2"></canvas>
       </div>
+    </div>
+    <div>
+      <div>
+        <canvas id="rxxChart"></canvas>
+      </div>
+      <div>
+        <canvas id="ryyChart"></canvas>
+      </div>
+      <div>
+        <canvas id="rxyChart"></canvas>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
   import axios from 'axios';
   import Chart from "chart.js";
-  import ChartDataProvider from "./ChartDataProvider";
+  import ChartDataProvider from "./ChartUtil";
 
   export default {
     name: "Lab2",
@@ -48,6 +48,8 @@
       return {
         from: '0',
         to: '1',
+        timeFrom: '2',
+        timeTo: '20',
         xEv: undefined,
         yEv: undefined,
         xVariance: undefined,
@@ -65,6 +67,15 @@
           .then(response => {
             this.setChartData(response.data);
             this.renderChart()
+          });
+      },
+      getTimeChart() {
+        axios.get(`http://localhost:8080/api/v1/lab2/time/chart?from=${this.timeFrom}&to=${this.timeTo}`) // todo: rewrite
+          .then(response => {
+            if (!this.timeChart) {
+              this.timeChart = ChartUtil.chart('timeChartLab1', [ChartUtil.dataset('T(N)', '#ccff63', [])]);
+            }
+            ChartUtil.refreshChart(this.timeChart, response.data)
           });
       },
       setChartData(data) {

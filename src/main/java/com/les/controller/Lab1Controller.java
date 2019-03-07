@@ -66,7 +66,7 @@ public class Lab1Controller implements LabController {
     }
 
     @GetMapping("/D/chart")
-    public Point[] DChart(@RequestParam(defaultValue = "0") int from,
+    public Point[] DChart(@RequestParam(defaultValue = "2") int from,
                           @RequestParam(defaultValue = "1024") int to) {
 
         Signal s = new Signal(n, Wmax, Amax);

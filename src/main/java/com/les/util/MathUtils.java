@@ -19,7 +19,7 @@ public final class MathUtils {
     }
 
     public static List<Double> range(double from, double to, double step) {
-        List<Double> list = new ArrayList<>();
+        List<Double> list = new ArrayList<>((int) Math.round(from - to));
 
         for (double i = from; i <= to; i+= step) {
             list.add(i);
@@ -29,7 +29,18 @@ public final class MathUtils {
     }
 
     public static double correlation(List<Double> aValues, int tauIndex) {
-        return correlation(aValues, aValues, tauIndex);
+        double aEv = ev(aValues);
+        aValues = aValues.stream().map(x -> x - aEv).collect(Collectors.toList());
+
+        double res = 0;
+
+        int i;
+        int size = aValues.size();
+        for (i = 0; i + tauIndex < size; i++) {
+            res += aValues.get(i) * aValues.get(i + tauIndex);
+        }
+
+        return res / (i - 1);
     }
 
     public static double correlation(List<Double> aValues, List<Double> bValues, int tauIndex) {
@@ -39,7 +50,7 @@ public final class MathUtils {
         bValues = bValues.stream().map(y -> y - bEv).collect(Collectors.toList());
         double res = 0;
         int i;
-        for (i = 0; i < aValues.size() && (i + tauIndex) < bValues.size(); i++) {
+        for (i = 0; i + tauIndex < bValues.size(); i++) {
             res += aValues.get(i) * bValues.get(i + tauIndex);
         }
         return res / (i - 1);
