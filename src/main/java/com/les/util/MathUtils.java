@@ -19,7 +19,7 @@ public final class MathUtils {
     }
 
     public static List<Double> range(double from, double to, double step) {
-        List<Double> list = new ArrayList<>((int) Math.round(from - to));
+        List<Double> list = new ArrayList<>((int) Math.round((to - from) * step));
 
         for (double i = from; i <= to; i+= step) {
             list.add(i);

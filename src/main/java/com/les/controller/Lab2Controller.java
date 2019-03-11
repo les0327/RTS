@@ -64,15 +64,16 @@ public class Lab2Controller implements LabController {
 
     @GetMapping("/time/chart")
     public Map<String, Point[]> timeChart(@RequestParam(defaultValue = "2") int from,
-                                          @RequestParam(defaultValue = "20") int to) {
+                                          @RequestParam(defaultValue = "20") int to,
+                                          @RequestParam(defaultValue = "1000") int multiplier) {
         Signal s = new Signal(n, Wmax, Amax);
 
         Point[] rxxChart = new Point[to - from];
         Point[] rxyChart = new Point[to - from];
 
-        for (int i = to; i < from; i++) {
+        for (int i = from; i < to; i++) {
 
-            final int step = i * 500;
+            final int step = i * multiplier;
 
             List<Double> tValues = range(0, 1, 1. / step);
 
@@ -82,8 +83,8 @@ public class Lab2Controller implements LabController {
             long rxxTime= TimeUtil.time(() -> MathUtils.correlation(xValues, 2));
             long rxyTime= TimeUtil.time(() -> MathUtils.correlation(xValues, yValues, 2));
 
-            rxxChart[i] = new Point(step, rxxTime);
-            rxyChart[i] = new Point(step, rxyTime);
+            rxxChart[i - from] = new Point(step, rxxTime);
+            rxyChart[i - from] = new Point(step, rxyTime);
         }
 
         Map<String, Point[]> response = new HashMap<>();

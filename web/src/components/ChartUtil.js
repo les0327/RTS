@@ -29,12 +29,18 @@ export default {
   },
   dataset(label, color, data) {
     return {label: label, borderColor: color, data: data, fill: false}
-  }
-  ,
-  refreshChart(chart, data) {
-    chart.data.datasets.forEach((dataset) => {
-      dataset.data = data ? data : [];
-    });
+  },
+  refreshChart(chart, data, label) {
+    if (!label)
+      chart.data.datasets.forEach((dataset) => {
+        dataset.data = data ? data : [];
+      });
+    else
+      chart.data.datasets.forEach((dataset) => {
+        if (dataset.label === label)
+          dataset.data = data ? data : [];
+      });
+
     chart.update();
   }
 }

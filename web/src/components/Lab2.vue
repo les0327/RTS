@@ -30,79 +30,92 @@
         <canvas id="rxyChart"></canvas>
       </div>
     </div>
+    <div>
+      <label>
+        from: <input v-model.number="timeFrom" type="number" @change="getTimeChart">
+      </label>
+      <label>
+        to: <input v-model.number="timeTo" type="number" @change="getTimeChart">
+      </label>
+      <label>
+        step: <input v-model.number="multiplier" type="number" @change="getTimeChart">
+      </label>
+      <div>
+        <canvas id="timeChartLab2"></canvas>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
   import axios from 'axios';
   import Chart from "chart.js";
-  import ChartDataProvider from "./ChartUtil";
+  import ChartUtil from "./ChartUtil";
 
   export default {
     name: "Lab2",
     components: {Chart},
     created() {
-      this.getChartData();
+      this.getCharts();
+      this.getTimeChart();
     },
     data() {
       return {
         from: '0',
         to: '1',
-        timeFrom: '2',
-        timeTo: '20',
+        timeFrom: '100',
+        timeTo: '200',
+        multiplier: '50',
         xEv: undefined,
         yEv: undefined,
         xVariance: undefined,
         yVariance: undefined,
-        xChartData: undefined,
-        yChartData: undefined,
-        rxxChartData: undefined,
-        ryyChartData: undefined,
-        rxyChartData: undefined
+        xChart: undefined,
+        yChart: undefined,
+        rxxChart: undefined,
+        ryyChart: undefined,
+        rxyChart: undefined,
+        timeChartL: undefined
       }
     },
     methods: {
-      getChartData() {
+      getCharts() {
         axios.get(`/api/v1/lab2/chart?from=${this.from}&to=${this.to}`)
           .then(response => {
-            this.setChartData(response.data);
-            this.renderChart()
+            if (!this.xChart) {
+              this.xChart = ChartUtil.chart('xChartLab2', [ChartUtil.dataset('X(t)', '#FF06FF', [])]);
+            }
+            if (!this.yChart) {
+              this.yChart = ChartUtil.chart('yChartLab2', [ChartUtil.dataset('Y(t)', '#ce63dd', [])]);
+            }
+            if (!this.rxxChart) {
+              this.rxxChart = ChartUtil.chart('rxxChart', [ChartUtil.dataset('Rxx(t)', '#ce63dd', [])]);
+            }
+            if (!this.ryyChart) {
+              this.ryyChart = ChartUtil.chart('ryyChart', [ChartUtil.dataset('Ryy(t)', '#dd3f4e', [])]);
+            }
+            if (!this.rxyChart) {
+              this.rxyChart = ChartUtil.chart('rxyChart', [ChartUtil.dataset('Rxy(t)', '#dd72af', [])]);
+            }
+            ChartUtil.refreshChart(this.xChart, response.data.xChart);
+            ChartUtil.refreshChart(this.yChart, response.data.yChart);
+            ChartUtil.refreshChart(this.rxxChart, response.data.rxx);
+            ChartUtil.refreshChart(this.ryyChart, response.data.ryy);
+            ChartUtil.refreshChart(this.rxyChart, response.data.rxy);
           });
       },
       getTimeChart() {
-        axios.get(`http://localhost:8080/api/v1/lab2/time/chart?from=${this.timeFrom}&to=${this.timeTo}`) // todo: rewrite
+        axios.get(`/api/v1/lab2/time/chart?from=${this.timeFrom}&to=${this.timeTo}&multiplier=${this.multiplier}`)
           .then(response => {
             if (!this.timeChart) {
-              this.timeChart = ChartUtil.chart('timeChartLab1', [ChartUtil.dataset('T(N)', '#ccff63', [])]);
+              this.timeChart = ChartUtil.chart('timeChartLab2', [
+                ChartUtil.dataset('Rxx(t)', '#44ff24', []),
+                ChartUtil.dataset('Rxy(t)', '#7131ff', [])
+              ]);
             }
-            ChartUtil.refreshChart(this.timeChart, response.data)
+            ChartUtil.refreshChart(this.timeChart, response.data.rxx, 'Rxx(t)');
+            ChartUtil.refreshChart(this.timeChart, response.data.rxy, 'Rxy(t)');
           });
-      },
-      setChartData(data) {
-        this.xEv = data.xEv;
-        this.yEv = data.yEv;
-        this.xVariance = data.xVariance;
-        this.yVariance = data.yVariance;
-
-        this.xChartData = data.xChart;
-        this.yChartData = data.yChart;
-
-        this.rxxChartData = data.rxx;
-        this.ryyChartData = data.ryy;
-        this.rxyChartData = data.rxy;
-      },
-      renderChart() {
-        const xCtx = document.getElementById('xChartLab2');
-        const yCtx = document.getElementById('yChartLab2');
-        const rxxCtx = document.getElementById('rxxChart');
-        const ryyCtx = document.getElementById('ryyChart');
-        const rxyCtx = document.getElementById('rxyChart');
-
-        new Chart(xCtx, ChartDataProvider.chartData('X(t)', '#6a7fdd', this.xChartData));
-        new Chart(yCtx, ChartDataProvider.chartData('Y(t)', '#ce63dd', this.yChartData));
-        new Chart(rxxCtx, ChartDataProvider.chartData('Rxx(t)', '#dddb97', this.rxxChartData));
-        new Chart(ryyCtx, ChartDataProvider.chartData('Ryy(t)', '#dd3f4e', this.rxyChartData));
-        new Chart(rxyCtx, ChartDataProvider.chartData('Rxy(t)', '#dd72af', this.rxyChartData));
       }
     }
   }
