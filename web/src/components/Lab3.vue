@@ -9,7 +9,7 @@
     <div>
       <canvas id="imagine"></canvas>
     </div>
-    <div id="amplitude" style="width:100%; min-height:400px;"></div>
+    <div id="amplitude" style="width:100%; min-height:500px;"></div>
   </div>
 </template>
 
@@ -29,7 +29,7 @@
     },
     data() {
       return {
-        N: 4,
+        N: 1024,
         realChart: undefined,
         imagineChart: undefined,
         amplitudeChart: undefined,
@@ -58,15 +58,36 @@
                 data: ['|F(p)|'],
                 align: 'left'
               },
+              dataZoom: [{
+                type: 'inside'
+              }, {
+                type: 'slider'
+              }],
               xAxis: {
-                data: response.data.map((p, i) => i)
+                data: response.data.map((p, i) => i),
+                silent: false,
+                splitLine: {
+                  show: false
+                },
+                splitArea: {
+                  show: false
+                }
               },
               yAxis: {
+                splitArea: {
+                  show: false
+                }
+              },
+              tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                  type: 'shadow'
+                }
               },
               series: [{
-                name: 'bar',
                 type: 'bar',
-                data: response.data.map(p => Math.sqrt(p.real * p.real + p.imagine * p.imagine))
+                data: response.data.map(p => Math.sqrt(p.real * p.real + p.imagine * p.imagine)),
+                large: true
               }]
             })
           })
