@@ -4,10 +4,10 @@
       N: <input v-model.number="N" type="number" @change="getChart">
     </label>
     <div>
-      <canvas id="real"></canvas>
+      <!--<canvas id="real"></canvas>-->
     </div>
     <div>
-      <canvas id="imagine"></canvas>
+      <!--<canvas id="imagine"></canvas>-->
     </div>
     <div id="amplitude" style="width:100%; min-height:500px;"></div>
   </div>
@@ -39,15 +39,15 @@
       getChart() {
         axios.get(`http://localhost:8080/api/v1/lab3/dft/chart?N=${this.N}`)
           .then(response => {
-            if (!this.realChart) {
-              this.realChart = ChartUtil.chart('real', [ChartUtil.dataset('R(p)', '#FF06FF', [])]);
-            }
-            if (!this.imagineChart) {
-              this.imagineChart = ChartUtil.chart('imagine', [ChartUtil.dataset('Im(p)', '#3afcff', [])]);
-            }
+            // if (!this.realChart) {
+            //   this.realChart = ChartUtil.chart('real', [ChartUtil.dataset('R(p)', '#FF06FF', [])]);
+            // }
+            // if (!this.imagineChart) {
+            //   this.imagineChart = ChartUtil.chart('imagine', [ChartUtil.dataset('Im(p)', '#3afcff', [])]);
+            // }
 
-            ChartUtil.refreshChart(this.realChart, response.data.map((p, i) => ({x: i, y: p.real})));
-            ChartUtil.refreshChart(this.imagineChart, response.data.map((p, i) => ({x: i, y: p.imagine})));
+            // ChartUtil.refreshChart(this.realChart, response.data.map((p, i) => ({x: i, y: p.real})));
+            // ChartUtil.refreshChart(this.imagineChart, response.data.map((p, i) => ({x: i, y: p.imagine})));
 
             if (!this.amplitudeChart) {
               this.amplitudeChart = echarts.init(document.getElementById('amplitude'));
