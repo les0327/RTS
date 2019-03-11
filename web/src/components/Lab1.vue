@@ -35,7 +35,7 @@
   </div>
 </template>
 
-<style scoped>
+<style>
 </style>
 
 <script>
@@ -67,7 +67,7 @@
     },
     methods: {
       getXChart() {
-        axios.get(`http://localhost:8080/api/v1/lab1/x/chart?from=${this.from}&to=${this.to}`)
+        axios.get(`/api/v1/lab1/x/chart?from=${this.from}&to=${this.to}`)
           .then(response => {
             this.ev = response.data.ev;
             this.variance = response.data.variance;
@@ -78,7 +78,7 @@
           });
       },
       getTimeChart() {
-        axios.get(`http://localhost:8080/api/v1/lab1/time/chart?count=${this.count}&step=${this.step}`)
+        axios.get(`/api/v1/lab1/time/chart?count=${this.count}&step=${this.step}`)
           .then(response => {
             if (!this.timeChart) {
               this.timeChart = ChartUtil.chart('timeChartLab1', [ChartUtil.dataset('T(N)', '#ccff63', [])]);
@@ -87,7 +87,7 @@
           });
       },
       getDChart() {
-        axios.get(`http://localhost:8080/api/v1/lab1/D/chart?from=${this.dFrom}&to=${this.dTo}`)
+        axios.get(`/api/v1/lab1/D/chart?from=${this.dFrom}&to=${this.dTo}`)
           .then(response => {
             if (!this.dChart) {
               this.dChart = ChartUtil.chart('DChartLab1', [ChartUtil.dataset('D(N)', '#FF06FF',[])]);

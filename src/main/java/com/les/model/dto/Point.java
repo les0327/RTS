@@ -3,8 +3,8 @@ package com.les.model.dto;
 import lombok.Data;
 
 @Data
-public class Point {
+public class Point<X, Y> {
 
-    private final double x;
-    private final double y;
+    private final X x;
+    private final Y y;
 }

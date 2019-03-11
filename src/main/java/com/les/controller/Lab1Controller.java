@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,20 +19,22 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/lab1")
 public class Lab1Controller implements LabController {
 
+    private final Signal s = new Signal(n, Wmax, Amax);
+
     @GetMapping("/x/chart")
     public Map<String, Object> xChart(@RequestParam(defaultValue = "0") double from,
                                       @RequestParam(defaultValue = "1") double to) {
         HashMap<String, Object> response = new HashMap<>();
-        Signal s = new Signal(n, Wmax, Amax);
 
-        List<Point> list = MathUtils.range(from, to, (to - from) / N)
+        List<Point<Double, Double>> list = MathUtils.range(from, to, (to - from) / N)
                 .stream()
-                .map(t -> new Point(t, s.value(t, harmonicFunction)))
+                .map(t -> new Point<>(t, s.value(t, harmonicFunction)))
                 .collect(Collectors.toList());
 
+        List<Double> collect = list.parallelStream().map(Point::getY).collect(Collectors.toList());
         response.put("chart", list);
-        response.put("ev", MathUtils.ev(list.stream().map(Point::getY).collect(Collectors.toList())));
-        response.put("variance", MathUtils.variance(list.stream().map(Point::getY).collect(Collectors.toList())));
+        response.put("ev", MathUtils.ev(collect));
+        response.put("variance", MathUtils.variance(collect));
 
         return response;
     }
@@ -41,8 +42,6 @@ public class Lab1Controller implements LabController {
     @GetMapping("/time/chart")
     public Point[] timeChart(@RequestParam(defaultValue = "20") int count,
                              @RequestParam(defaultValue = "10") int step) {
-        Signal s = new Signal(n, Wmax, Amax);
-
         Point[] response = new Point[count];
 
         for (int i = 0; i < count; i++) {
@@ -59,7 +58,7 @@ public class Lab1Controller implements LabController {
 
             time /= 3;
 
-            response[i] = new Point(div, time);
+            response[i] = new Point<>(div, time);
         }
 
         return response;
@@ -69,18 +68,16 @@ public class Lab1Controller implements LabController {
     public Point[] DChart(@RequestParam(defaultValue = "2") int from,
                           @RequestParam(defaultValue = "1024") int to) {
 
-        Signal s = new Signal(n, Wmax, Amax);
-
         Point[] response = new Point[to - from];
 
         for (int i = from; i < to; i++) {
 
             List<Double> values = MathUtils.range(0, 1, 1. / i)
-                    .stream()
+                    .parallelStream()
                     .map(t -> s.value(t, harmonicFunction))
                     .collect(Collectors.toList());
 
-            response[i - from] = new Point(i, MathUtils.variance(values));
+            response[i - from] = new Point<>(i, MathUtils.variance(values));
         }
 
         return response;

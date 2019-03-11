@@ -21,6 +21,8 @@ import static com.les.util.MathUtils.*;
 @RequestMapping("/api/v1/lab2")
 public class Lab2Controller implements LabController {
 
+    private final Signal s = new Signal(n, Wmax, Amax);
+
     @GetMapping("/chart")
     public Map<String, Object> compute(@RequestParam(defaultValue = "0") double from,
                                        @RequestParam(defaultValue = "1") double to) {
@@ -31,15 +33,13 @@ public class Lab2Controller implements LabController {
         List<Double> corrYValues = new ArrayList<>(N / 2);
         List<Double> corrXYValues = new ArrayList<>(N / 2);
 
-        Signal s = new Signal(n, Wmax, Amax);
-
         List<Double> tValues = range(from, to, (to - from) / N);
 
-        List<Point> xChart = getChart(tValues, s);
-        List<Point> yChart = getChart(tValues, s);
+        List<Point<Double, Double>> xChart = getChart(tValues, s);
+        List<Point<Double, Double>> yChart = getChart(tValues, s);
 
-        List<Double> xValues = xChart.stream().map(Point::getY).collect(Collectors.toList());
-        List<Double> yValues = yChart.stream().map(Point::getY).collect(Collectors.toList());
+        List<Double> xValues = xChart.parallelStream().map(Point::getY).collect(Collectors.toList());
+        List<Double> yValues = yChart.parallelStream().map(Point::getY).collect(Collectors.toList());
 
         for (int tau = 1; tau < N / 2; tau++) {
             corrXValues.add(correlation(xValues, tau));
@@ -66,8 +66,6 @@ public class Lab2Controller implements LabController {
     public Map<String, Point[]> timeChart(@RequestParam(defaultValue = "2") int from,
                                           @RequestParam(defaultValue = "20") int to,
                                           @RequestParam(defaultValue = "1000") int multiplier) {
-        Signal s = new Signal(n, Wmax, Amax);
-
         Point[] rxxChart = new Point[to - from];
         Point[] rxyChart = new Point[to - from];
 
@@ -83,8 +81,8 @@ public class Lab2Controller implements LabController {
             long rxxTime= TimeUtil.time(() -> MathUtils.correlation(xValues, 2));
             long rxyTime= TimeUtil.time(() -> MathUtils.correlation(xValues, yValues, 2));
 
-            rxxChart[i - from] = new Point(step, rxxTime);
-            rxyChart[i - from] = new Point(step, rxyTime);
+            rxxChart[i - from] = new Point<>(step, rxxTime);
+            rxyChart[i - from] = new Point<>(step, rxyTime);
         }
 
         Map<String, Point[]> response = new HashMap<>();
@@ -95,22 +93,23 @@ public class Lab2Controller implements LabController {
         return response;
     }
 
-    private List<Point> mapToChart(List<Double> tValues, List<Double> values) {
-        List<Point> chart = new ArrayList<>(Math.min(tValues.size(), values.size()));
+    private List<Point<Double, Double>> mapToChart(List<Double> tValues, List<Double> values) {
+        List<Point<Double, Double>> chart = new ArrayList<>(Math.min(tValues.size(), values.size()));
+
         for (int i = 0; i < tValues.size() && i < values.size(); i++)
-            chart.add(new Point(tValues.get(i), values.get(i)));
+            chart.add(new Point<>(tValues.get(i), values.get(i)));
 
         return chart;
     }
 
-    private List<Point> getChart(List<Double> tValues, Signal s) {
-        return tValues.stream()
-                .map(t -> new Point(t, s.value(t, harmonicFunction)))
+    private List<Point<Double, Double>> getChart(List<Double> tValues, Signal s) {
+        return tValues.parallelStream()
+                .map(t -> new Point<>(t, s.value(t, harmonicFunction)))
                 .collect(Collectors.toList());
     }
 
     private List<Double> getValues(List<Double> tValues, Signal s) {
-        return tValues.stream()
+        return tValues.parallelStream()
                 .map(t ->  s.value(t, harmonicFunction))
                 .collect(Collectors.toList());
     }

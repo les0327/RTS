@@ -47,9 +47,11 @@
   </div>
 </template>
 
+<style>
+</style>
+
 <script>
   import axios from 'axios';
-  import Chart from "chart.js";
   import ChartUtil from "./ChartUtil";
 
   export default {
@@ -97,11 +99,19 @@
             if (!this.rxyChart) {
               this.rxyChart = ChartUtil.chart('rxyChart', [ChartUtil.dataset('Rxy(t)', '#dd72af', [])]);
             }
-            ChartUtil.refreshChart(this.xChart, response.data.xChart);
-            ChartUtil.refreshChart(this.yChart, response.data.yChart);
-            ChartUtil.refreshChart(this.rxxChart, response.data.rxx);
-            ChartUtil.refreshChart(this.ryyChart, response.data.ryy);
-            ChartUtil.refreshChart(this.rxyChart, response.data.rxy);
+            const data = response.data;
+
+            this.xEv = data.xEv;
+            this.yEv = data.yEv;
+
+            this.xVariance = data.xVariance;
+            this.yVariance = data.yVariance;
+
+            ChartUtil.refreshChart(this.xChart, data.xChart);
+            ChartUtil.refreshChart(this.yChart, data.yChart);
+            ChartUtil.refreshChart(this.rxxChart, data.rxx);
+            ChartUtil.refreshChart(this.ryyChart, data.ryy);
+            ChartUtil.refreshChart(this.rxyChart, data.rxy);
           });
       },
       getTimeChart() {
@@ -109,18 +119,14 @@
           .then(response => {
             if (!this.timeChart) {
               this.timeChart = ChartUtil.chart('timeChartLab2', [
-                ChartUtil.dataset('Rxx(t)', '#44ff24', []),
-                ChartUtil.dataset('Rxy(t)', '#7131ff', [])
+                ChartUtil.dataset('Trxx(N)', '#44ff24', []),
+                ChartUtil.dataset('Trxy(N)', '#7131ff', [])
               ]);
             }
-            ChartUtil.refreshChart(this.timeChart, response.data.rxx, 'Rxx(t)');
-            ChartUtil.refreshChart(this.timeChart, response.data.rxy, 'Rxy(t)');
+            ChartUtil.refreshChart(this.timeChart, response.data.rxx, 'Trxx(N)');
+            ChartUtil.refreshChart(this.timeChart, response.data.rxy, 'Trxy(N)');
           });
       }
     }
   }
 </script>
-
-<style>
-
-</style>

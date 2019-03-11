@@ -1,5 +1,7 @@
 package com.les.util;
 
+import com.les.model.dto.Complex;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,12 +12,12 @@ public final class MathUtils {
     }
 
     public static double ev(List<Double> values) {
-        return values.stream().mapToDouble(Double::doubleValue).sum() / values.size();
+        return values.parallelStream().mapToDouble(Double::doubleValue).sum() / values.size();
     }
 
     public static double variance(List<Double> values) {
         double ev = ev(values);
-        return values.stream().mapToDouble(x -> (x - ev) * (x - ev)).sum() / (values.size() - 1);
+        return values.parallelStream().mapToDouble(x -> (x - ev) * (x - ev)).sum() / (values.size() - 1);
     }
 
     public static List<Double> range(double from, double to, double step) {
@@ -30,7 +32,7 @@ public final class MathUtils {
 
     public static double correlation(List<Double> aValues, int tauIndex) {
         double aEv = ev(aValues);
-        aValues = aValues.stream().map(x -> x - aEv).collect(Collectors.toList());
+        aValues = aValues.parallelStream().map(x -> x - aEv).collect(Collectors.toList());
 
         double res = 0;
 
@@ -46,8 +48,8 @@ public final class MathUtils {
     public static double correlation(List<Double> aValues, List<Double> bValues, int tauIndex) {
         double aEv = ev(aValues);
         double bEv = ev(bValues);
-        aValues = aValues.stream().map(x -> x - aEv).collect(Collectors.toList());
-        bValues = bValues.stream().map(y -> y - bEv).collect(Collectors.toList());
+        aValues = aValues.parallelStream().map(x -> x - aEv).collect(Collectors.toList());
+        bValues = bValues.parallelStream().map(y -> y - bEv).collect(Collectors.toList());
         double res = 0;
         int i;
         for (i = 0; i + tauIndex < bValues.size(); i++) {
@@ -56,4 +58,18 @@ public final class MathUtils {
         return res / (i - 1);
     }
 
+    public static Complex[][] getW(int N) {
+        Complex[][] matrix = new Complex[N][N];
+
+        double cof = 2 * Math.PI / N;
+
+        for (int k = 0; k < N; k++) {
+            for (int p = 0; p < N; p++) {
+                double f = cof * p * k;
+                matrix[k][p] = new Complex(Math.cos(f), Math.sin(f));
+            }
+        }
+
+        return matrix;
+    }
 }
