@@ -34,6 +34,12 @@ task copyWebFront(type: Copy, dependsOn: ['buildWeb']) {
     into 'src/main/resources/static'
 }
 
+clean.dependsOn('cleanWebFront')
+
+task cleanWebFront(type: Delete) {
+    project.delete(files('src/main/resources/static'))
+}
+
 build.dependsOn('copyWebFront')
 
 task buildDocker(type: Exec, dependsOn: 'build') {
