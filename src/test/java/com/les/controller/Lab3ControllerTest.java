@@ -14,4 +14,5 @@ public class Lab3ControllerTest {
     public void getDFT() {
         log.info("{}", Arrays.toString(new Lab3Controller().getDFT(1024)));
     }
+
 }

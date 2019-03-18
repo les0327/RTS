@@ -3,10 +3,10 @@
     <h1>Lab2</h1>
     <div>
       <label>
-        from: <input v-model.number="from" type="number" @change="getChartData">
+        from: <input v-model.number="from" type="number" @change="getCharts">
       </label>
       <label>
-        to: <input v-model.number="to" type="number" @change="getChartData">
+        to: <input v-model.number="to" type="number" @change="getCharts">
       </label>
       <div>
         <p>Mx: {{xEv}}</p>
@@ -66,8 +66,8 @@
         from: '0',
         to: '1',
         timeFrom: '100',
-        timeTo: '200',
-        multiplier: '50',
+        timeTo: '110',
+        multiplier: '1000',
         xEv: undefined,
         yEv: undefined,
         xVariance: undefined,

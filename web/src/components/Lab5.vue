@@ -1,13 +1,14 @@
 <template>
+  <div id="lab5">
     <h1>Lab5</h1>
+  </div>
 </template>
 
-<script>
-    export default {
-        name: "Lab5"
-    }
-</script>
-
 <style>
-
 </style>
+
+<script>
+  export default {
+    name: "Lab5"
+  }
+</script>

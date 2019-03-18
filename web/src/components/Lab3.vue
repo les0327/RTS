@@ -1,5 +1,6 @@
 <template>
   <div id="lab3">
+    <h1>Lab3</h1>
     <label>
       N: <input v-model.number="N" type="number" @change="getChart">
     </label>
@@ -20,7 +21,7 @@
   import axios from 'axios';
   import echarts from 'echarts'
   import 'echarts/lib/chart/bar'
-  import ChartUtil from "./ChartUtil";
+  // import ChartUtil from "./ChartUtil";
 
   export default {
     name: "Lab3",
@@ -37,7 +38,7 @@
     },
     methods: {
       getChart() {
-        axios.get(`http://localhost:8080/api/v1/lab3/dft/chart?N=${this.N}`)
+        axios.get(`/api/v1/lab3/dft/chart?N=${this.N}`)
           .then(response => {
             // if (!this.realChart) {
             //   this.realChart = ChartUtil.chart('real', [ChartUtil.dataset('R(p)', '#FF06FF', [])]);
@@ -45,7 +46,7 @@
             // if (!this.imagineChart) {
             //   this.imagineChart = ChartUtil.chart('imagine', [ChartUtil.dataset('Im(p)', '#3afcff', [])]);
             // }
-
+            //
             // ChartUtil.refreshChart(this.realChart, response.data.map((p, i) => ({x: i, y: p.real})));
             // ChartUtil.refreshChart(this.imagineChart, response.data.map((p, i) => ({x: i, y: p.imagine})));
 

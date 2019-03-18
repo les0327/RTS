@@ -9,16 +9,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.les.util.MathUtils.*;
+import static com.les.util.MathUtils.range;
 
 @RestController
-@RequestMapping("/api/v1/lab3")
-public class Lab3Controller implements LabController {
+@RequestMapping("/api/v1/lab4")
+public class Lab4Controller implements LabController {
 
     private final Signal s = new Signal(n, Wmax, Amax);
 
-    @GetMapping("/dft/chart")
-    public Complex[] getDFT(int N) {
+    @GetMapping("/fft/chart")
+    public Complex[] getFFT(int N) {
 
         List<Double> tValues = range(0, 1, 1. / N);
 
@@ -26,7 +26,7 @@ public class Lab3Controller implements LabController {
                 .map(t -> s.value(t, harmonicFunction))
                 .toArray(Double[]::new);
 
-        return MathUtils.DFT(x);
-    }
 
+        return MathUtils.FFT(x);
+    }
 }

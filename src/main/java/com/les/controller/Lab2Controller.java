@@ -41,7 +41,7 @@ public class Lab2Controller implements LabController {
         List<Double> xValues = xChart.parallelStream().map(Point::getY).collect(Collectors.toList());
         List<Double> yValues = yChart.parallelStream().map(Point::getY).collect(Collectors.toList());
 
-        for (int tau = 1; tau < N / 2; tau++) {
+        for (int tau = 0; tau < N / 2; tau++) {
             corrXValues.add(correlation(xValues, tau));
             corrYValues.add(correlation(yValues, tau));
             corrXYValues.add(correlation(xValues, yValues, tau));

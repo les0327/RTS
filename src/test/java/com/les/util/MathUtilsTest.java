@@ -13,7 +13,7 @@ public class MathUtilsTest {
 
     @Test
     public void getW() {
-        Complex[][] W = MathUtils.getW(8);
+        Complex[][] W = MathUtils.getW(2);
 
         for (Complex[] cof : W) {
             log.info("{}", Arrays.toString(cof));
