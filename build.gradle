@@ -29,18 +29,20 @@ task buildWeb(type: Exec) {
     commandLine 'npm', 'run', 'build'
 }
 
-task copyWebFront(type: Copy, dependsOn: ['buildWeb']) {
+task copyWebFront(type: Copy) {
     from 'web/dist'
     into 'src/main/resources/static'
 }
 
-clean.dependsOn('cleanWebFront')
+copyWebFront.dependsOn buildWeb
+processResources.dependsOn copyWebFront
+
 
 task cleanWebFront(type: Delete) {
     project.delete(files('src/main/resources/static'))
 }
 
-build.dependsOn('copyWebFront')
+cleanWebFront.mustRunAfter clean
 
 task buildDocker(type: Exec, dependsOn: 'build') {
     workingDir '.'
