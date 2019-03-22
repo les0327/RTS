@@ -90,10 +90,9 @@ public final class MathUtils {
 
         Complex[][] w = getW(N);
 
-        Complex[] F = new Complex[N];
+        Complex[] F = new Complex[N / 2];
 
-
-        for (int p = 0; p < N; p++) {
+        for (int p = 0; p < N / 2; p++) {
 
             double real = 0;
             double imagine = 0;
@@ -111,12 +110,9 @@ public final class MathUtils {
     public static Complex[] DFTWithoutTable(Double[] x) {
         int N = x.length;
 
-        Complex[][] w = getW(N);
-
         Complex[] F = new Complex[N];
 
-
-        for (int p = 0; p < N; p++) {
+        for (int p = 0; p < N / 2; p++) {
 
             double real = 0;
             double imagine = 0;
@@ -135,15 +131,15 @@ public final class MathUtils {
         int N = x.length;
 
         Complex[][] halfW = getW(N / 2);
-        Complex[] W = getW(N, 1);
+        Complex[][] W = getW(N);
 
 
-        Complex[] F = new Complex[x.length];
+        Complex[] F = new Complex[N / 2];
 
-        Complex[] evenF = new Complex[N / 2];
-        Complex[] oddF = new Complex[N / 2];
+        Complex[] evenF = new Complex[F.length / 2];
+        Complex[] oddF = new Complex[F.length / 2];
 
-        for (int p = 0; p < N / 2; p++) {
+        for (int p = 0; p < F.length / 2; p++) {
 
             double real = 0;
             double imagine = 0;
@@ -168,9 +164,9 @@ public final class MathUtils {
             oddF[p] = new Complex(real, imagine);
         }
 
-        for (int p = 0; p < N / 2; p++) {
-            F[p] = evenF[p].add(W[p].mul(oddF[p]));
-            F[p + N / 2] = evenF[p].sub(W[p].mul(oddF[p]));
+        for (int p = 0; p < F.length / 2; p++) {
+            F[p] = evenF[p].add(W[p][1].mul(oddF[p]));
+            F[p + F.length / 2] = evenF[p].sub(W[p][1].mul(oddF[p]));
         }
 
         return F;

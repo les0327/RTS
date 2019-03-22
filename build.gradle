@@ -35,7 +35,7 @@ task copyWebFront(type: Copy) {
 }
 
 copyWebFront.dependsOn buildWeb
-processResources.dependsOn copyWebFront
+//processResources.dependsOn copyWebFront
 
 
 task cleanWebFront(type: Delete) {

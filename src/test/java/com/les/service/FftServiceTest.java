@@ -19,19 +19,29 @@ public class FftServiceTest {
 
     @Test
     public void FFT() {
-        int N = 16;
-        final Signal s = new Signal(n, Wmax, Amax);
+//        int N = 16;
+//        final Signal s = new Signal(n, Wmax, Amax);
+//
+//        List<Double> tValues = range(0, 1, 1. / N);
+//
+//        Double[] x = tValues.parallelStream()
+//                .map(t -> s.value(t, harmonicFunction))
+//                .toArray(Double[]::new);
 
-        List<Double> tValues = range(0, 1, 1. / N);
+        List<Double> tValues = range(0, 2 * Math.PI, Math.PI / 4);
 
-        Double[] x = tValues.parallelStream()
-                .map(t -> s.value(t, harmonicFunction))
+        Double[] x = tValues.stream()
+                .map(t -> Math.sin(t))
                 .toArray(Double[]::new);
 
+        Complex[] fftFj = fftService.FFT(x);
         Complex[] fft = fftService.FFT(x);
         Complex[] dft = MathUtils.DFT(x);
 
+        log.debug("FJ fft- {}", Arrays.toString(fftFj));
         log.debug("fft - {}", Arrays.toString(fft));
         log.debug("dft - {}", Arrays.toString(dft));
     }
+
+
 }

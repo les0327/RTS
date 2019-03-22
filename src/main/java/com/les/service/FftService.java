@@ -38,7 +38,7 @@ public class FftService {
         protected Complex[] compute() {
             int N = x.length;
 
-            if (N != 2) {
+            if (N != 4) {
                 Complex[] F = new Complex[N];
 
                 Double[] evenX = divideArr(x, true);
@@ -56,9 +56,6 @@ public class FftService {
 
                 for (int p = 0; p < N / 2; p++) {
                     F[p] = evenF[p].add(W[p].mul(oddF[p]));
-                }
-
-                for (int p = 0; p < N / 2; p++) {
                     F[p + N / 2] = evenF[p].sub(W[p].mul(oddF[p]));
                 }
 
