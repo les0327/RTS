@@ -66,7 +66,7 @@ public final class MathUtils {
         Complex[][] matrix = new Complex[N][N];
 
         for (int k = 0; k < N; k++) {
-           matrix[k] = getW(N, k);
+            matrix[k] = getW(N, k);
         }
 
         return matrix;
@@ -108,6 +108,29 @@ public final class MathUtils {
         return F;
     }
 
+    public static Complex[] DFTWithoutTable(Double[] x) {
+        int N = x.length;
+
+        Complex[][] w = getW(N);
+
+        Complex[] F = new Complex[N];
+
+
+        for (int p = 0; p < N; p++) {
+
+            double real = 0;
+            double imagine = 0;
+
+            for (int k = 0; k < N; k++) {
+                real += x[k] * Math.cos(2 * Math.PI / N * k * p);
+                imagine -= x[k] * Math.sin(2 * Math.PI / N * k * p);
+            }
+
+            F[p] = new Complex(real, imagine);
+        }
+        return F;
+    }
+
     public static Complex[] FFT(Double[] x) {
         int N = x.length;
 
@@ -115,64 +138,40 @@ public final class MathUtils {
         Complex[] W = getW(N, 1);
 
 
-        CompletableFuture<Complex[]> evenFuture = CompletableFuture.supplyAsync(() -> {
-            Complex[] evenF = new Complex[N / 2];
-
-            for (int p = 0; p < N / 2; p++) {
-
-                double real = 0;
-                double imagine = 0;
-
-                for (int k = 0; k < N / 2; k++) {
-
-                    real += x[2 * k] * halfW[p][k].getReal();
-                    imagine -= x[2 * k] * halfW[p][k].getImagine();
-                }
-
-                evenF[p] = new Complex(real, imagine);
-            }
-            return evenF;
-        });
-
-        CompletableFuture<Complex[]> oddFuture = CompletableFuture.supplyAsync(() -> {
-            Complex[] oddF = new Complex[N / 2];
-
-            for (int p = 0; p < N / 2; p++) {
-
-                double real = 0;
-                double imagine = 0;
-
-                for (int k = 0; k < N / 2; k++) {
-
-                    real += x[2 * k + 1] * halfW[p][k].getReal();
-                    imagine -= x[2 * k + 1] * halfW[p][k].getImagine();
-                }
-
-                oddF[p] = new Complex(real, imagine);
-            }
-
-            return oddF;
-        });
-
-        Complex[] evenF = evenFuture.join();
-        Complex[] oddF = oddFuture.join();
-
         Complex[] F = new Complex[x.length];
 
-        CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
-            for (int p = 0; p < N / 2; p++) {
-                F[p] = evenF[p].add(W[p].mul(oddF[p]));
-            }
-        });
+        Complex[] evenF = new Complex[N / 2];
+        Complex[] oddF = new Complex[N / 2];
 
-        CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
-            for (int p = 0; p < N / 2; p++) {
-                F[p + N / 2] = evenF[p].sub(W[p].mul(oddF[p]));
-            }
-        });
+        for (int p = 0; p < N / 2; p++) {
 
-        future1.join();
-        future2.join();
+            double real = 0;
+            double imagine = 0;
+
+            for (int k = 0; k < N / 2; k++) {
+
+                real += x[2 * k] * halfW[p][k].getReal();
+                imagine -= x[2 * k] * halfW[p][k].getImagine();
+            }
+
+            evenF[p] = new Complex(real, imagine);
+
+            real = 0;
+            imagine = 0;
+
+            for (int k = 0; k < N / 2; k++) {
+
+                real += x[2 * k + 1] * halfW[p][k].getReal();
+                imagine -= x[2 * k + 1] * halfW[p][k].getImagine();
+            }
+
+            oddF[p] = new Complex(real, imagine);
+        }
+
+        for (int p = 0; p < N / 2; p++) {
+            F[p] = evenF[p].add(W[p].mul(oddF[p]));
+            F[p + N / 2] = evenF[p].sub(W[p].mul(oddF[p]));
+        }
 
         return F;
     }

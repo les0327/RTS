@@ -75,11 +75,15 @@ public class Lab2Controller implements LabController {
 
             List<Double> tValues = range(0, 1, 1. / step);
 
-            List<Double> xValues = getValues(tValues, s);
-            List<Double> yValues = getValues(tValues, s);
-
-            long rxxTime= TimeUtil.time(() -> MathUtils.correlation(xValues, 2));
-            long rxyTime= TimeUtil.time(() -> MathUtils.correlation(xValues, yValues, 2));
+            long rxxTime= TimeUtil.time(() -> {
+                List<Double> xValues = getValues(tValues, s);
+                MathUtils.correlation(xValues, 2);
+            });
+            long rxyTime= TimeUtil.time(() -> {
+                List<Double> xValues = getValues(tValues, s);
+                List<Double> yValues = getValues(tValues, s);
+                MathUtils.correlation(xValues, yValues, 2);
+            });
 
             rxxChart[i - from] = new Point<>(step, rxxTime);
             rxyChart[i - from] = new Point<>(step, rxyTime);

@@ -11,6 +11,20 @@
       <!--<canvas id="imagine"></canvas>-->
     </div>
     <div id="amplitude" style="width:100%; min-height:500px;"></div>
+
+    <div>
+      <label>
+        from: <input v-model.number="timeFrom" type="number" @change="getTimeChart">
+      </label>
+      <label>
+        to: <input v-model.number="timeTo" type="number" @change="getTimeChart">
+      </label>
+      <label>
+        step: <input v-model.number="multiplier" type="number" @change="getTimeChart">
+      </label>
+      <canvas id="timeChart"></canvas>
+    </div>
+
   </div>
 </template>
 
@@ -21,19 +35,24 @@
   import axios from 'axios';
   import echarts from 'echarts'
   import 'echarts/lib/chart/bar'
-  // import ChartUtil from "./ChartUtil";
+  import ChartUtil from "./ChartUtil";
 
   export default {
     name: "Lab3",
     created() {
       this.getChart();
+      this.getTimeChart();
     },
     data() {
       return {
         N: 1024,
+        timeFrom: '100',
+        timeTo: '110',
+        multiplier: '10',
         realChart: undefined,
         imagineChart: undefined,
         amplitudeChart: undefined,
+        timeChart: undefined
       }
     },
     methods: {
@@ -92,6 +111,19 @@
               }]
             })
           })
+      },
+      getTimeChart() {
+        axios.get(`/api/v1/lab3/time/chart?from=${this.timeFrom}&to=${this.timeTo}&multiplier=${this.multiplier}`)
+          .then(response => {
+            if (!this.timeChart) {
+              this.timeChart = ChartUtil.chart('timeChart', [
+                ChartUtil.dataset('With(N)', '#44ff24', []),
+                ChartUtil.dataset('Without(N)', '#7131ff', [])
+              ]);
+            }
+            ChartUtil.refreshChart(this.timeChart, response.data.with, 'With(N)');
+            ChartUtil.refreshChart(this.timeChart, response.data.without, 'Without(N)');
+          });
       }
     }
   }
