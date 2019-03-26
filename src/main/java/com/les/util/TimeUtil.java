@@ -1,6 +1,5 @@
 package com.les.util;
 
-import java.time.Instant;
 
 public final class TimeUtil {
 
@@ -8,8 +7,9 @@ public final class TimeUtil {
     }
 
     public static long time(Action action) {
-        Instant start = Instant.now();
+        long start = System.nanoTime();
         action.action();
-        return Instant.now().toEpochMilli() - start.toEpochMilli();
+
+        return System.nanoTime() - start;
     }
 }

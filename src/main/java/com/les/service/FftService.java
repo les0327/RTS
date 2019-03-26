@@ -38,7 +38,7 @@ public class FftService {
         protected Complex[] compute() {
             int N = x.length;
 
-            if (N != 4) {
+            if (N != 2) {
                 Complex[] F = new Complex[N];
 
                 Double[] evenX = divideArr(x, true);

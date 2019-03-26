@@ -134,12 +134,12 @@ public final class MathUtils {
         Complex[][] W = getW(N);
 
 
-        Complex[] F = new Complex[N / 2];
+        Complex[] F = new Complex[N];
 
-        Complex[] evenF = new Complex[F.length / 2];
-        Complex[] oddF = new Complex[F.length / 2];
+        Complex[] evenF = new Complex[N / 2];
+        Complex[] oddF = new Complex[N / 2];
 
-        for (int p = 0; p < F.length / 2; p++) {
+        for (int p = 0; p < N / 2; p++) {
 
             double real = 0;
             double imagine = 0;
@@ -164,9 +164,9 @@ public final class MathUtils {
             oddF[p] = new Complex(real, imagine);
         }
 
-        for (int p = 0; p < F.length / 2; p++) {
+        for (int p = 0; p < N / 2; p++) {
             F[p] = evenF[p].add(W[p][1].mul(oddF[p]));
-            F[p + F.length / 2] = evenF[p].sub(W[p][1].mul(oddF[p]));
+            F[p + N / 2] = evenF[p].sub(W[p][1].mul(oddF[p]));
         }
 
         return F;
